@@ -1,0 +1,115 @@
+basePath: /
+definitions:
+  model.Person:
+    properties:
+      age:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      refreshToken:
+        type: string
+      works:
+        type: boolean
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: API server for Trainee
+  title: Trainee simple API
+  version: "1.0"
+paths:
+  /login/{id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: user password & id
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/model.Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Authentication
+      tags:
+      - auth
+  /logout/{id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Logout
+      tags:
+      - auth
+  /sign-up:
+    post:
+      parameters:
+      - description: create user
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/model.Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Person'
+      summary: Registration
+      tags:
+      - auth
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: GetOrderByID is echo handler(GET) which returns json structure
+        of User object
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: GetUserById
+      tags:
+      - orders
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
