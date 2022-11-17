@@ -14,13 +14,13 @@ import (
 
 // PRepository :creating new connection with PostgresDB
 type PRepository struct {
-	Pool *pgxpool.Pool
+	PPool *pgxpool.Pool
 }
 
 // Create : insert new user into database
 func (r *PRepository) Create(ctx context.Context, person *model.Person) (string, error) {
 	newID := uuid.New().String()
-	_, err := r.Pool.Exec(ctx, "insert into persons(id,name,password) values($1,$2,$3)",
+	_, err := r.PPool.Exec(ctx, "insert into persons(id,name,password) values($1,$2,$3)",
 		newID, &person.Name, &person.Password)
 	if err != nil {
 		log.Errorf("database error with create user: %v", err)
@@ -32,7 +32,7 @@ func (r *PRepository) Create(ctx context.Context, person *model.Person) (string,
 // SelectAll : Print all users(ID,Name,Works) from database
 func (r *PRepository) SelectAll(ctx context.Context) ([]*model.Person, error) {
 	var persons []*model.Person
-	rows, err := r.Pool.Query(ctx, "select id,name from persons")
+	rows, err := r.PPool.Query(ctx, "select id,name from persons")
 	if err != nil {
 		log.Errorf("database error with select all users, %v", err)
 		return nil, err
@@ -53,7 +53,7 @@ func (r *PRepository) SelectAll(ctx context.Context) ([]*model.Person, error) {
 
 // Delete : delete user by his ID
 func (r *PRepository) Delete(ctx context.Context, id string) error {
-	a, err := r.Pool.Exec(ctx, "delete from persons where id=$1", id)
+	a, err := r.PPool.Exec(ctx, "delete from persons where id=$1", id)
 	if a.RowsAffected() == 0 {
 		return fmt.Errorf("user with this id doesnt exist")
 	}
@@ -69,7 +69,7 @@ func (r *PRepository) Delete(ctx context.Context, id string) error {
 
 // UpdateAuth : update user refreshToken by his ID
 func (r *PRepository) UpdateAuth(ctx context.Context, id, refreshToken string) error {
-	a, err := r.Pool.Exec(ctx, "update persons set refreshToken=$1 where id=$2", refreshToken, id)
+	a, err := r.PPool.Exec(ctx, "update persons set refreshToken=$1 where id=$2", refreshToken, id)
 	if a.RowsAffected() == 0 {
 		return fmt.Errorf("user with this id doesnt exist")
 	}
@@ -82,7 +82,7 @@ func (r *PRepository) UpdateAuth(ctx context.Context, id, refreshToken string) e
 
 // Update update user in db
 func (r *PRepository) Update(ctx context.Context, id string, p *model.Person) error {
-	a, err := r.Pool.Exec(ctx, "update persons set name=$1 where id=$2", &p.Name, id)
+	a, err := r.PPool.Exec(ctx, "update persons set name=$1 where id=$2", &p.Name, id)
 	if a.RowsAffected() == 0 {
 		return fmt.Errorf("user with this id doesnt exist")
 	}
@@ -96,7 +96,7 @@ func (r *PRepository) Update(ctx context.Context, id string, p *model.Person) er
 // SelectByID : select one user by his ID
 func (r *PRepository) SelectByID(ctx context.Context, id string) (model.Person, error) {
 	p := model.Person{}
-	err := r.Pool.QueryRow(ctx, "select id,name,password from persons where id=$1", id).Scan(
+	err := r.PPool.QueryRow(ctx, "select id,name,password from persons where id=$1", id).Scan(
 		&p.ID, &p.Name, &p.Password)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -111,7 +111,7 @@ func (r *PRepository) SelectByID(ctx context.Context, id string) (model.Person, 
 // SelectByIDAuth select auth user
 func (r *PRepository) SelectByIDAuth(ctx context.Context, id string) (model.Person, error) {
 	p := model.Person{}
-	err := r.Pool.QueryRow(ctx, "select id,refreshToken from persons where id=$1", id).Scan(&p.ID, &p.RefreshToken)
+	err := r.PPool.QueryRow(ctx, "select id,refreshToken from persons where id=$1", id).Scan(&p.ID, &p.RefreshToken)
 
 	if err != nil /*err==no-records*/ {
 		if err == pgx.ErrNoRows {
@@ -125,7 +125,7 @@ func (r *PRepository) SelectByIDAuth(ctx context.Context, id string) (model.Pers
 
 func (r *PRepository) CreateAdvert(ctx context.Context, advert *model.Advert) (string, error) {
 	newID := uuid.New().String()
-	_, err := r.Pool.Exec(ctx, "insert into advert(id,address,price) values($1,$2,$3)",
+	_, err := r.PPool.Exec(ctx, "insert into advert(id,address,price) values($1,$2,$3)",
 		newID, &advert.Address, &advert.Price)
 	if err != nil {
 		log.Errorf("database error with create advert: %v", err)
@@ -136,7 +136,7 @@ func (r *PRepository) CreateAdvert(ctx context.Context, advert *model.Advert) (s
 
 func (r *PRepository) SelectAllAdvert(ctx context.Context) ([]*model.Advert, error) {
 	var adverts []*model.Advert
-	rows, err := r.Pool.Query(ctx, "select id,address,price from adverts")
+	rows, err := r.PPool.Query(ctx, "select id,address,price from adverts")
 	if err != nil {
 		log.Errorf("database error with select all adverts, %v", err)
 		return nil, err
@@ -156,7 +156,7 @@ func (r *PRepository) SelectAllAdvert(ctx context.Context) ([]*model.Advert, err
 }
 
 func (r *PRepository) DeleteAdvert(ctx context.Context, id string) error {
-	a, err := r.Pool.Exec(ctx, "delete from adverts where id=$1", id)
+	a, err := r.PPool.Exec(ctx, "delete from adverts where id=$1", id)
 	if a.RowsAffected() == 0 {
 		return fmt.Errorf("advert with this id doesnt exist")
 	}
@@ -171,7 +171,7 @@ func (r *PRepository) DeleteAdvert(ctx context.Context, id string) error {
 }
 
 func (r *PRepository) UpdateAdvert(ctx context.Context, id string, advert *model.Advert) error {
-	a, err := r.Pool.Exec(ctx, "update adverts set address=$1,price=$2 where id=$4", &advert.Address, &advert.Price, id)
+	a, err := r.PPool.Exec(ctx, "update adverts set address=$1,price=$2 where id=$4", &advert.Address, &advert.Price, id)
 	if a.RowsAffected() == 0 {
 		return fmt.Errorf("user with this id doesnt exist")
 	}

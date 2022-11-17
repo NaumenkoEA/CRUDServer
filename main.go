@@ -61,7 +61,6 @@ func main() {
 	rps := service.NewService(conn, c)
 	h := handlers.NewHandler(rps)
 	e.GET("/users", h.GetAllUsers)
-	e.GET("/attachment", h.DownloadFile)
 	e.POST("/sign-up", h.Registration)
 	e.PUT("/usersUpdate/:id", h.UpdateUser, middleware.IsAuthenticated)
 	e.DELETE("/usersDelete/:id", h.DeleteUser, middleware.IsAuthenticated)
@@ -69,7 +68,6 @@ func main() {
 	e.POST("/logout/:id", h.Logout, middleware.IsAuthenticated)
 	e.GET("/users/:id", h.GetUserByID, middleware.IsAuthenticated)
 	e.GET("/refreshToken", h.RefreshToken, middleware.IsAuthenticated)
-	e.POST("/upload", h.Upload)
 
 	e.GET("/adverts", h.GetAllAdvert)
 	e.PUT("/advertsUpdate/:id", h.UpdateAdvert)
@@ -84,7 +82,7 @@ func main() {
 }
 
 // DBConnection create connection with db
-func DBConnection(cfg *model.Config) *repository.PRepository {
+func DBConnection(cfg *model.Config) repository.Repository {
 	switch cfg.CurrentDB {
 	case "postgres":
 		poolP, err := pgxpool.Connect(context.Background() /*cfg.PostgresDbUrl */, "postgresql://postgres:123@localhost:5432/person")
@@ -92,7 +90,7 @@ func DBConnection(cfg *model.Config) *repository.PRepository {
 			log.Errorf("bad connection with postgresql: %v", err)
 			return nil
 		}
-		return &repository.PRepository{Pool: poolP}
+		return repository.PRepository{PPool: poolP}
 
 	case "mongo":
 		poolM, err := mongo.Connect(context.Background(), options.Client().ApplyURI(cfg.MongoDBURL /*"mongodb://127.0.0.1:27017"*/))
@@ -100,7 +98,7 @@ func DBConnection(cfg *model.Config) *repository.PRepository {
 			log.Errorf("bad connection with mongoDb: %v", err)
 			return nil
 		}
-		return &repository.PRepository{Pool: poolM}
+		return repository.MRepository{MPool: poolM}
 	}
 	return nil
 }

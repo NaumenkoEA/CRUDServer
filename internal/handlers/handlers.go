@@ -6,15 +6,10 @@ import (
 	"awesomeProject/internal/service"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
-	"strconv"
-	"time"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"net/http"
 )
 
 var validate = validator.New()
@@ -169,48 +164,6 @@ func (h *Handler) GetAdvertByID(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, person)
-}
-
-// DownloadFile download
-func (h *Handler) DownloadFile(c echo.Context) error {
-	filename := c.QueryString()
-	err := c.Attachment(filename, "new_txt_file.txt")
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
-	}
-	return c.JSON(http.StatusOK, nil)
-}
-
-// Upload upload
-func (h *Handler) Upload(c echo.Context) error {
-	var fileName, fileType string
-	file, err := c.FormFile("file")
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	src, err := file.Open()
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	fileByte, err := io.ReadAll(src)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	fileType = http.DetectContentType(fileByte)
-	const (
-		a = 5
-		b = 0o0600
-	)
-	fileName = "uploads/" + strconv.FormatInt(time.Now().Unix(), a) + ".jpg"
-	err = os.WriteFile(fileName, fileByte, b)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	return c.JSON(http.StatusOK, model.Response{
-		Message:  "Success",
-		FileType: fileType,
-		FileSize: file.Size,
-	})
 }
 
 // ValidateValueID validate id

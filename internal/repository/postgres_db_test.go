@@ -68,7 +68,7 @@ func TestCreate(t *testing.T) {
 			Password: "250",
 		},
 	}
-	rps := NewService(&PRepository{Pool: Pool})
+	rps := NewService(&PRepository{PPool: Pool})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	for _, p := range testValidData {
@@ -81,7 +81,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 func TestSelectAll(t *testing.T) {
-	rps := NewService(&PRepository{Pool: Pool})
+	rps := NewService(&PRepository{PPool: Pool})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -107,7 +107,7 @@ func TestSelectAll(t *testing.T) {
 }
 
 func TestSelectById(t *testing.T) {
-	rps := NewService(&PRepository{Pool: Pool})
+	rps := NewService(&PRepository{PPool: Pool})
 	ctx, cancel := context.WithCancel(context.Background())
 	_, err := rps.rps.SelectByID(ctx, "12")
 	require.NoError(t, err, "select user by id: this id dont exist")
@@ -117,7 +117,7 @@ func TestSelectById(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	rps := NewService(&PRepository{Pool: Pool})
+	rps := NewService(&PRepository{PPool: Pool})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -162,7 +162,7 @@ func TestUpdate(t *testing.T) {
 	require.Error(t, err, "update error")
 }
 func TestPRepository_UpdateAuth(t *testing.T) {
-	rps := NewService(&PRepository{Pool: Pool})
+	rps := NewService(&PRepository{PPool: Pool})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	err := rps.rps.UpdateAuth(ctx, "25a64c4c-139f-4303-a83d-f31095a114af",
@@ -173,7 +173,7 @@ func TestPRepository_UpdateAuth(t *testing.T) {
 	require.Error(t, err, "there isnt an error")
 }
 func TestPRepository_SelectByIdAuth(t *testing.T) {
-	rps := NewService(&PRepository{Pool: Pool})
+	rps := NewService(&PRepository{PPool: Pool})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	_, err := rps.rps.SelectByIDAuth(ctx, "25a64c4c-139f-4303-a83d-f31095a114af")
@@ -183,7 +183,7 @@ func TestPRepository_SelectByIdAuth(t *testing.T) {
 }
 
 func TestPRepository_Delete(t *testing.T) {
-	rps := NewService(&PRepository{Pool: Pool})
+	rps := NewService(&PRepository{PPool: Pool})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	_, err := rps.rps.SelectByIDAuth(ctx, "25a64c4c-139f-4303-a83d-f31095a114af")

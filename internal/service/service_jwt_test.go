@@ -37,7 +37,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestService_Authentication(t *testing.T) {
-	rps := NewService(&repository.PRepository{Pool: Pool}, &cache.UserCache{})
+	rps := NewService(&repository.PRepository{PPool: Pool}, &cache.UserCache{})
 	h := NewHandler(rps)
 	_, _, err := h.s.Authentication(context.Background(), "a20fc586-d9d2-4969-909f-d00bf42aa88a", "tujh2004")
 	require.NoError(t, err, "passwords dont match")
@@ -57,12 +57,12 @@ func TestHashPassword(t *testing.T) {
 }
 
 func TestService_Registration(t *testing.T) {
-	rps := NewService(&repository.PRepository{Pool: Pool}, &cache.UserCache{})
+	rps := NewService(&repository.PRepository{PPool: Pool}, &cache.UserCache{})
 	h := NewHandler(rps)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	testValidData := model.Person{Name: "Mani", Works: true, Age: 19, Password: "worker"}
-	testNoValidData := model.Person{Name: "Anton", Works: true, Age: 19, Password: "worker"}
+	testValidData := model.Person{Name: "Mani", Password: "worker"}
+	testNoValidData := model.Person{Name: "Anton", Password: "worker"}
 	_, err := h.s.Registration(ctx, &testValidData)
 	require.NoError(t, err, "cannot register this user")
 	_, err = h.s.Registration(ctx, &testNoValidData)
@@ -70,7 +70,7 @@ func TestService_Registration(t *testing.T) {
 }
 
 func TestService_RefreshToken(t *testing.T) {
-	rps := NewService(&repository.PRepository{Pool: Pool}, &cache.UserCache{})
+	rps := NewService(&repository.PRepository{PPool: Pool}, &cache.UserCache{})
 	h := NewHandler(rps)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -86,18 +86,14 @@ func TestCreateJWT(t *testing.T) {
 	testUser := model.Person{
 		ID:       "a20fc586-d9d2-4969-909f-d00bf42aa88a",
 		Name:     "Egor Tihonov",
-		Works:    true,
-		Age:      18,
 		Password: "tujh2004",
 	}
 	testUserNoValidate := model.Person{
 		ID:       "0",
 		Name:     "Egor Tihonov",
-		Works:    true,
-		Age:      120,
 		Password: "tujh2004",
 	}
-	s := NewService(&repository.PRepository{Pool: Pool}, &cache.UserCache{})
+	s := NewService(&repository.PRepository{PPool: Pool}, &cache.UserCache{})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	_, _, err := s.CreateJWT(ctx, s.rps, &testUser)

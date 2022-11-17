@@ -17,8 +17,10 @@ type Repository interface {
 
 	SelectAll(ctx context.Context) ([]*model.Person, error)
 	SelectAllAdvert(ctx context.Context) ([]*model.Advert, error)
+
 	SelectByID(ctx context.Context, id string) (model.Person, error)
 	SelectAdvertByID(ctx context.Context, id string) (model.Advert, error)
+
 	SelectByIDAuth(ctx context.Context, id string) (model.Person, error)
 
 	Delete(ctx context.Context, id string) error

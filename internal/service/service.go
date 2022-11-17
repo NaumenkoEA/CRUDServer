@@ -14,14 +14,13 @@ var JwtKey = []byte("super-key")
 
 // Service struct
 type Service struct {
-	rps         repository.Repository
-	userCache   *cache.UserCache
-	advertCache *cache.UserCache
+	rps       repository.Repository
+	userCache *cache.UserCache
 }
 
 // NewService create new service connection
 func NewService(newRps repository.Repository, userCache *cache.UserCache) *Service { // create
-	return &Service{rps: newRps, userCache: userCache}
+	return &Service{newRps, userCache}
 }
 
 // UpdateUser update user in cache and DB

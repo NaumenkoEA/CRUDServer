@@ -63,7 +63,7 @@ func TestCreateMongo(t *testing.T) {
 			Password: "4",
 		},
 	}
-	rps := NewServiceM(&MRepository{Pool: PoolM})
+	rps := NewServiceM(&MRepository{PPool: PoolM})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	for _, p := range testValidData {
@@ -76,7 +76,7 @@ func TestCreateMongo(t *testing.T) {
 	}
 }
 func TestSelectAllMongo(t *testing.T) {
-	rps := NewServiceM(&MRepository{Pool: PoolM})
+	rps := NewServiceM(&MRepository{PPool: PoolM})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -101,7 +101,7 @@ func TestSelectAllMongo(t *testing.T) {
 }
 
 func TestSelectByIdMongo(t *testing.T) {
-	rps := NewServiceM(&MRepository{Pool: PoolM})
+	rps := NewServiceM(&MRepository{PPool: PoolM})
 	ctx, cancel := context.WithCancel(context.Background())
 	_, err := rps.rps.SelectById(ctx, "1223")
 	require.NoError(t, err, "select user by id: this id dont exist")
@@ -111,7 +111,7 @@ func TestSelectByIdMongo(t *testing.T) {
 }
 
 func TestUpdateMongo(t *testing.T) {
-	rps := NewServiceM(&MRepository{Pool: PoolM})
+	rps := NewServiceM(&MRepository{PPool: PoolM})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
